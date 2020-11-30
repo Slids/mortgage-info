@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package mortgage_forms;
+
+message amortization_line {
+  optional int32 period = 1;
+  optional double interest_charged = 2;
+  optional double repayment_made = 3;
+  optional double payment_toward_principal = 4;
+  optional double outstanding_principal = 5;
+}
+
+message mortgage_information {
+  repeated amortization_line repayment_information = 1;
+  optional double total_interest = 2;
+  optional double total_paid = 3;
+  optional double periodic_payment = 4;
+}
+
+
+message mortgage_information_request {
+  optional int32 interest = 1;
+  optional int64 loan_amount = 2;
+  optional int32 num_periods = 3;
+}
