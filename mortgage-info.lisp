@@ -9,11 +9,13 @@
 (in-package :mortgage-info)
 
 (defun periodic-payment (loan-amount interest num-periods)
-  (let* ((monthly-interest-rate (/ interest 12))
-         (inverse-num-periods (- num-periods)))
-    (/ (* loan-amount monthly-interest-rate)
-       (- 1 (expt (+ 1 monthly-interest-rate)
-                  inverse-num-periods)))))
+  (if (= interest 0)
+      (/ loan-amount num-periods)
+      (let* ((monthly-interest-rate (/ interest 12))
+             (inverse-num-periods (- num-periods)))
+        (/ (* loan-amount monthly-interest-rate)
+           (- 1 (expt (+ 1 monthly-interest-rate)
+                      inverse-num-periods))))))
 
 (defun get-aproximate-monthly-dollars (monthly-amount)
   (/ (floor (* monthly-amount 100)) 100))
@@ -22,6 +24,7 @@
   (get-aproximate-monthly-dollars (* principal-remaining (/ interest 12))))
 
 (defun populate-mortgage-info (loan-amount interest-percent num-periods)
+  (assert (> num-periods 0))
   (let* ((interest (/ interest-percent 100))
          (%monthly-payment (periodic-payment loan-amount
                                              interest num-periods))
