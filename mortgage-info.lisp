@@ -36,7 +36,7 @@
         (setf interest-paid (+ interest-paid period-interest)
               principal-remaining (- principal-remaining ptp))
         (push (mf:make-amortization-line
-               :period i
+               :period (1+ i)
                :interest-charged period-interest
                :repayment-made monthly-payment
                :payment-toward-principal ptp
@@ -77,12 +77,10 @@
          (request (cond ((string= request-type "application/json")
                          (let ((string-request
                                  (flexi-streams:octets-to-string request)))
-                           (print string-request)
                            (cl-protobufs.json:parse-json
                             'mf:mortgage-information-request
                             :stream (make-string-input-stream string-request))))
                         (t
-                         (print (raw-post-data))
                          (cl-protobufs:deserialize-from-stream
                           'mf:mortgage-information-request
                           :stream request))))
@@ -109,4 +107,4 @@
                (make-instance 'easy-acceptor
                               :port 4242))))
 
-;; (start-server)
+(start-server)
