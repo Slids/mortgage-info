@@ -17,9 +17,8 @@ message mortgage_information {
   optional double periodic_payment = 4;
 }
 
-
 message mortgage_information_request {
-  optional int32 interest = 1;
+  optional double interest = 1;
   optional int64 loan_amount = 2;
   optional int32 num_periods = 3;
 }
