@@ -5,7 +5,7 @@
   :description      "Functions for mortgage info"
   :long-description "Functions for mortgage info"
   :defsystem-depends-on (:cl-protobufs)
-  :depends-on (:hunchentoot)
+  :depends-on (:hunchentoot :cl-protobufs :grpc :ace.flag)
   :components
   ((:module "src"
     :serial t

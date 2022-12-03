@@ -1,12 +1,28 @@
 (defpackage #:mortgage-info
   (:use #:cl
-        #:hunchentoot)
+        #:hunchentoot
+        #:grpc)
   (:local-nicknames
-   (#:mf #:cl-protobufs.mortgage-forms))
-  (:export #:start-server
-           #:stop-server))
+   (#:mf #:cl-protobufs.mortgage-forms)
+   (#:flag #:ace.flag))
+  (:export #:main))
 
 (in-package :mortgage-info)
+
+(flag:define hostname "localhost"
+  "Name of server that will be connected to."
+  :names ("hostname")
+  :type STRING)
+
+(flag:define port-number 8080
+  "Port of server to establish connection to."
+  :names ("port")
+  :type INTEGER)
+
+(flag:define grpc-server-p t
+  "Port of server to establish connection to."
+  :names ("grpc-server-p")
+  :type BOOLEAN)
 
 (defun periodic-payment (loan-amount interest num-periods)
   (if (= interest 0)
@@ -100,14 +116,28 @@
           (t
            (cl-protobufs:serialize-to-bytes response)))))
 
-(defun stop-server ()
+(defun stop-http-server ()
   (when *acceptor*
     (stop *acceptor*)))
 
-(defun start-server ()
+(defun start-http-server ()
   (stop-server)
   (start (setf *acceptor*
                (make-instance 'easy-acceptor
                               :port 4242))))
 
-(start-server)
+(defun start-grpc-server ()
+  (grpc::init-grpc)
+  (unwind-protect
+       (grpc::run-grpc-proto-server
+        (concatenate 'string
+                     hostname ":"
+                     (write-to-string port-number))
+        'mf::mortgage-server
+        :num-threads 5)
+    (grpc:shutdown-grpc)))
+
+(defun main ()
+  (if grpc-server-p
+      (start-grpc-server)
+      (start-http-server)))

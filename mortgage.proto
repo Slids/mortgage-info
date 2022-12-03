@@ -22,3 +22,9 @@ message mortgage_information_request {
   optional int64 loan_amount = 2;
   optional int32 num_periods = 3;
 }
+
+service MortgageServer {
+  // Receives a HelloRequest and response with a HelloReply.
+  rpc MortgageRequest(mortgage_information_request)
+    returns (mortgage_information) {}
+}
